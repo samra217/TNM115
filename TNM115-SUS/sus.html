@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+
+<html lang="en">
+    <head>
+        <script src = "scripts.js"></script>
+        <link rel ="stylesheet" href = "style.css">
+        <meta charset="UTF-8">
+        <meta name = "author" content = "Samuel">
+        <title>System Usability Scale</title>
+    </head>
+    <body>
+        
+        <h1>Questionnaire: System Usability Scale (SUS)</h1>
+
+        <img src = "./media/sus-teaser.png" alt = "Grading scale using SUS">
+        <article>
+            <h2>Instructions</h2>
+
+            <p>For each of the following statements, mark <b>one</b> box that best describes your reactions to the
+            system you interacted with today.
+            </p>  
+
+            <p>
+                <button onclick="generateQuestionnaire()">Generate a new questionnaire</button>
+            </p>
+        </article>
+
+        <article id ="sus-questionnaire-container">
+            <h2>System Usability Scale</h2> <!--This article container will serve as the practical root HTML element node for all
+                                            the HTML DOM additions and manipulations. The other article element node that contains
+                                            all the HTML element nodes created in the prior lessons will be deleted later in this lesson.
+                                            -->
+        
+        </article>
+
+        <article id="sus-result-container">
+            <h2>Result</h2>
+            <button type="submit" onclick="submitQuestionnaire()">Submit.</button>
+            <h3 id="sus-result"></h3>
+        </article>
+
+
+        
+
+        <article>
+            <h2>References</h2>
+            <ol>
+                <li>
+                    <a href = "https://www.taylorfrancis.com/books/edit/10.1201/9781498710411/usability-evaluation-industry-thomas-patrick-jordan-ian-lyall-mcclelland-bernard-weerdmeester"
+                    target = "_ ">
+                        John Brooke. SUS: A ’Quick and Dirty’ Usability Scale. In Patrick W. Jordan, B. Thomas,
+                        Ian Lyall McClelland, and Bernard Weerdmeester, editors, Usability Evaluation In Industry,
+                        pages 189–194. CRC Press, 11 June 1996. doi: 10.1201/9781498710411.
+
+                    </a>
+                </li>
+                
+                <li>
+                    <a href = "https://uxpajournal.org/determining-what-individual-sus-scores-mean-adding-an-adjective-rating-scale/"
+                    target = "_ ">
+                        Aaron Bangor, Philip Kortum, and James Miller. Determining What Individual SUS Scores
+                        Mean: Adding an Adjective Rating Scale. Journal of Usability Studies, 4(3):114–123, May 2009.
+                    </a>
+                </li>
+            </ol>
+        </article>
+
+
+    </body>
+</html>
