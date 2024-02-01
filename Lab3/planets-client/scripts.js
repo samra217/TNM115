@@ -13,6 +13,8 @@
 // JSON object composed by: Nico Reski
 // based on data available at: https://science.nasa.gov/solar-system/
 
+const serverUrl = "http://127.0.0.1:3001";
+
 // == Documentation for individual star/planet JSON objects ==
 // id           -> unique identifier for a JSON object across the dataset
 // name         -> textual name
@@ -23,117 +25,7 @@
 // neighbors    -> array containing the ids of its neighbors
 // image_src    -> filepath to image
 // online_ref   -> link (url) for further reading
-const solarSystemData = {
-  version: "2024-01-23",
-  data_source: "https://science.nasa.gov/solar-system/",
-  star: {
-    id: "s1",
-    name: "Sun",
-    description:
-      "A star is a hot, glowing ball of gas. When you look up in the night sky, you can see countless twinkling stars. Can you see any stars during the daytime? Of course! The light of daytime comes from our closest star: the Sun.",
-    neighbors: ["p1"],
-    image_src: "media/sun.png",
-    online_ref: "https://science.nasa.gov/sun/",
-  },
-  planets: [
-    {
-      id: "p1",
-      name: "Mercury",
-      description:
-        "Mercury is the smallest planet in our solar system. It's just a little bigger than Earth's Moon. Mercury itself, though, doesn't have any moons. It is the closest planet to the Sun, but it's actually not the hottest. Venus is hotter.",
-      time_day: 59,
-      time_year: 88,
-      moons: null,
-      neighbors: ["s1", "p2"],
-      image_src: "media/mercury.png",
-      online_ref: "https://science.nasa.gov/mercury/",
-    },
-    {
-      id: "p2",
-      name: "Venus",
-      description:
-        "Venus looks like a very active planet. It has mountains and volcanoes. Venus is similar in size to Earth. Earth is just a little bit bigger.",
-      time_day: 243,
-      time_year: 225,
-      moons: null,
-      neighbors: ["p1", "p3"],
-      image_src: "media/venus.png",
-      online_ref: "https://science.nasa.gov/venus/",
-    },
-    {
-      id: "p3",
-      name: "Earth",
-      description:
-        "Our home planet Earth is a rocky, terrestrial planet. It has a solid and active surface with mountains, valleys, canyons, plains and so much more. Earth is special because it is an ocean planet. Water covers 70% of Earth's surface.",
-      time_day: 1,
-      time_year: 365.25,
-      moons: ["Moon"],
-      neighbors: ["p2", "p4"],
-      image_src: "media/earth.png",
-      online_ref: "https://science.nasa.gov/earth/",
-    },
-    {
-      id: "p4",
-      name: "Mars",
-      description:
-        "Mars is a cold desert world. The average temperature on Mars is minus 85 degrees Fahrenheit - way below freezing. It is half the size of Earth. Mars is sometimes called the Red Planet. It's red because of rusty iron in the ground.",
-      time_day: 1.025,
-      time_year: 687,
-      moons: ["Phobos", "Deimos"],
-      neighbors: ["p3", "p5"],
-      image_src: "media/mars.png",
-      online_ref: "https://science.nasa.gov/mars/",
-    },
-    {
-      id: "p5",
-      name: "Jupiter",
-      description:
-        "Jupiter is the biggest planet in our solar system. It's similar to a star, but it never got massive enough to start burning. It is covered in swirling cloud stripes. It has big storms like the Great Red Spot, which has been going for hundreds of years. Jupiter is a gas giant and doesn't have a solid surface.",
-      time_day: 0.417,
-      time_year: 11.8,
-      moons: 95,
-      neighbors: ["p4", "p6"],
-      image_src: "media/jupiter.png",
-      online_ref: "https://science.nasa.gov/jupiter/",
-    },
-    {
-      id: "p6",
-      name: "Saturn",
-      description:
-        "Saturn isn't the only planet to have rings, but it definitely has the most beautiful ones. The rings we see are made of groups of tiny ringlets that surround Saturn. They're made of chunks of ice and rock. Like Jupiter, Saturn is mostly a ball of hydrogen and helium.",
-      time_day: 0.446,
-      time_year: 29,
-      moons: 146,
-      neighbors: ["p5", "p7"],
-      image_src: "media/saturn.png",
-      online_ref: "https://science.nasa.gov/saturn/",
-    },
-    {
-      id: "p7",
-      name: "Uranus",
-      description:
-        "Uranus is made of water, methane, and ammonia fluids above a small rocky center. Its atmosphere is made of hydrogen and helium like Jupiter and Saturn, but it also has methane. The methane makes Uranus blue.",
-      time_day: 0.71,
-      time_year: 84,
-      moons: 27,
-      neighbors: ["p6", "p8"],
-      image_src: "media/uranus.png",
-      online_ref: "https://science.nasa.gov/uranus/",
-    },
-    {
-      id: "p8",
-      name: "Neptune",
-      description:
-        "Neptune is dark, cold, and very windy. It's the last of the planets in our solar system. It's more than 30 times as far from the sun as Earth is. Neptune is very similar to Uranus. It's made of a thick fog of water, ammonia, and methane over an Earth-sized solid center.",
-      time_day: 0.71,
-      time_year: 165,
-      moons: 14,
-      neighbors: ["p7"],
-      image_src: "media/neptune.png",
-      online_ref: "https://science.nasa.gov/neptune/",
-    },
-  ],
-};
+
 // =============================
 
 // manually added listener for the "DOMContentLoaded" event, which is automatically invoked
@@ -144,48 +36,124 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const webPageURL = new URL(document.URL);
 
-  document.body.appendChild(generateButton("Home"));
-  switch (webPageURL.searchParams.get("page")) {
-    case "all":
-      document.body.innerHTML = "";
-      document.body.appendChild(generateAll());
-      break;
-    case "sun":
-      document.body.appendChild(generateSun());
-      break;
-    case "mercury":
-      document.body.appendChild(generatePlanetText(solarSystemData.planets[0]));
-      break;
-    case "venus":
-      document.body.appendChild(generatePlanetText(solarSystemData.planets[1]));
-      break;
-    case "earth":
-      document.body.appendChild(generatePlanetText(solarSystemData.planets[2]));
-      break;
-    case "mars":
-      document.body.appendChild(generatePlanetText(solarSystemData.planets[3]));
-      break;
-    case "jupiter":
-      document.body.appendChild(generatePlanetText(solarSystemData.planets[4]));
-      break;
-    case "saturn":
-      document.body.appendChild(generatePlanetText(solarSystemData.planets[5]));
-      break;
-    case "uranus":
-      document.body.appendChild(generatePlanetText(solarSystemData.planets[6]));
-      break;
-    case "neptune":
-      document.body.appendChild(generatePlanetText(solarSystemData.planets[7]));
-      break;
-    default:
-      document.body.innerHTML = "";
-      document.body.appendChild(home());
-      break;
-  }
+  generateAllFromServer();
 });
 
 // ===== PROVIDED JS SOURCE CODE    -- ABOVE   =====
 // ===== JS LAB 2 IMPLEMENTATION -- BENEATH =====
+
+/*async function getPlanetDataFromServer() {
+  //client sends message to server
+  const response = await fetch(serverUrl + "/data", {
+    method: "GET",
+    headers: {
+      "Content-Type": "apllication/json",
+    },
+    body: null,
+  });
+  //client recieves servers response
+  if (response.ok) {
+    response.json().then((jsonBody) => {
+      JSON.parse(jsonBody);
+    });
+  } else {
+    console.log("Client request to server was unsuccesul");
+    console.log(response.status + " | " + response.statusText);
+  }
+}*/
+async function generateAllFromServer() {
+  //client sends message to server
+  const response = await fetch(serverUrl + "/data", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  //client recieves servers response
+  if (response.ok) {
+    response.json().then((jsonBody) => {
+      console.log(jsonBody);
+      const container = document.createElement("div");
+
+      // Append new content to the container
+      container.appendChild(generateButton("Home"));
+      const gridContainer = document.createElement("article");
+      gridContainer.className = "button-grid-container";
+      gridContainer.style.display = "grid";
+      gridContainer.style.gridTemplateColumns = "1fr 1fr 1fr";
+      gridContainer.style.gap = "100px";
+      gridContainer.style.width = "100%";
+      gridContainer.appendChild(generateSun(jsonBody));
+      for (let i = 0; i < jsonBody.planets.length; i++) {
+        gridContainer.appendChild(generatePlanetText(jsonBody.planets[i]));
+      }
+      container.appendChild(gridContainer);
+
+      // Clear the body and append the container
+      document.body.innerHTML = "";
+      document.body.appendChild(container);
+    });
+  } else {
+    console.log("Client request to server was unsuccesul");
+    console.log(response.status + " | " + response.statusText);
+  }
+}
+
+async function generatePlanetFromServer(entityName) {
+  const response = await fetch(serverUrl + "/data" + "/" + entityName, {
+    method: "GET",
+    headers: {
+      "Content-Type": "apllication/json",
+    },
+    body: null,
+  });
+  //client recieves servers response
+  if (response.ok) {
+    return response.json();
+  } else {
+    console.log("Client request to server was unsuccesul");
+    console.log(response.status + " | " + response.statusText);
+  }
+}
+
+async function getSpecificPlanetImage(entityName) {
+  const response = await fetch(serverUrl + "/image" + "/" + entityName, {
+    method: "GET",
+    headers: {
+      "Content-Type": "image/png",
+    },
+    body: null,
+  });
+  //client recieves servers response
+  if (response.ok) {
+    response.blob().then((blobBody) => {
+      const filePath = URL.createObjectURL(blobBody);
+    });
+  } else {
+    console.log("Client request to server was unsuccesul");
+    console.log(response.status + " | " + response.statusText);
+  }
+}
+
+function home() {
+  //const solarSystemData = getPlanetDataFromServer();
+  const gridContainer = document.createElement("article");
+  gridContainer.className = "button-grid-container";
+  gridContainer.style.display = "grid";
+  gridContainer.style.gridTemplateColumns = "1fr 1fr 1fr 1fr 1fr";
+  gridContainer.style.gridTemplateRow = "100% 100%";
+  gridContainer.style.gap = "100px";
+
+  const allButton = generateButton("All");
+  const sunButton = generateButton(solarSystemData.star.name);
+
+  gridContainer.appendChild(allButton);
+  gridContainer.appendChild(sunButton);
+  for (let i = 0; i < solarSystemData.planets.length; i++) {
+    gridContainer.appendChild(generateButton(solarSystemData.planets[i].name));
+  }
+  return gridContainer;
+}
 
 function generateButton(planetName) {
   const buttonDiv = document.createElement("div");
@@ -193,8 +161,8 @@ function generateButton(planetName) {
 
   const button = document.createElement("button");
 
-  button.onclick = function () {
-    buttonOnClick(planetName);
+  button.onclick = function (planetName) {
+    buttonOnClickToServer(planetName);
   };
 
   const buttonText = document.createTextNode(planetName);
@@ -211,7 +179,7 @@ function generateButton(planetName) {
   return buttonDiv;
 }
 
-function getPlanetIDbyName(planetName) {
+function getPlanetIDbyName(planetName, solarSystemData) {
   if (planetName.toLowerCase() === "sun") {
     return "s1"; //id for sun
   } else if (planetName.toLowerCase() === "all") {
@@ -227,7 +195,7 @@ function getPlanetIDbyName(planetName) {
   return "0"; //ID for homebutton
 }
 
-function getPlanetNamebyID(planetID) {
+function getPlanetNamebyID(planetID, solarSystemData) {
   if (planetID.toLowerCase() === "s1") {
     return "Sun";
   }
@@ -241,15 +209,16 @@ function getPlanetNamebyID(planetID) {
   }
 }
 
-function getNeighbors(planet) {
+function getNeighbors(planet, solarSystemData) {
   returnString = "";
   for (let i = 0; i < planet.neighbors.length; i++) {
-    returnString += getPlanetNamebyID(planet.neighbors[i]) + " ";
+    returnString +=
+      getPlanetNamebyID(planet.neighbors[i], solarSystemData) + " ";
   }
   return returnString;
 }
 
-function buttonOnClick(planetName) {
+/*function buttonOnClickToServer(planetName) {
   document.body.innerHTML = "";
 
   const planetID = getPlanetIDbyName(planetName);
@@ -273,13 +242,15 @@ function buttonOnClick(planetName) {
   } else {
     document.body.appendChild(generateSun()); //function call for the sun
   }
-}
+}*/
 
 function getTimeInHours(days) {
   return days * 24;
 }
 
-function generateAll() {
+async function generateAll() {
+  solarSystemData = await getAllPlanetData();
+  console.log(solarSystemData);
   document.body.innerHTML = "";
   document.body.appendChild(generateButton("Home"));
   const gridContainer = document.createElement("article");
@@ -290,29 +261,9 @@ function generateAll() {
   gridContainer.style.gap = "100px";
   gridContainer.style.width = "100%";
 
-  gridContainer.appendChild(generateSun());
+  gridContainer.appendChild(generateSun(solarSystemData));
   for (let i = 0; i < solarSystemData.planets.length; i++) {
     gridContainer.appendChild(generatePlanetText(solarSystemData.planets[i]));
-  }
-
-  return gridContainer;
-}
-
-function home() {
-  const gridContainer = document.createElement("article");
-  gridContainer.className = "button-grid-container";
-  gridContainer.style.display = "grid";
-  gridContainer.style.gridTemplateColumns = "1fr 1fr 1fr 1fr 1fr";
-  gridContainer.style.gridTemplateRow = "100% 100%";
-  gridContainer.style.gap = "100px";
-
-  const allButton = generateButton("All");
-  const sunButton = generateButton(solarSystemData.star.name);
-
-  gridContainer.appendChild(allButton);
-  gridContainer.appendChild(sunButton);
-  for (i = 0; i < solarSystemData.planets.length; i++) {
-    gridContainer.appendChild(generateButton(solarSystemData.planets[i].name));
   }
   return gridContainer;
 }
@@ -371,7 +322,7 @@ function generatePlanetText(planet) {
   return divContainer;
 }
 
-function generateSun() {
+function generateSun(solarSystemData) {
   const divContainer = document.createElement("div");
   const h1 = document.createElement("h1");
   const h1Text = document.createTextNode("Sun");
@@ -381,7 +332,7 @@ function generateSun() {
   const anchor = generateAnchor(solarSystemData.star);
   const pNeighbors = createContentElement(
     "p",
-    "Neighbors: " + getNeighbors(solarSystemData.star)
+    "Neighbors: " + getNeighbors(solarSystemData.star, solarSystemData)
   );
 
   const img = document.createElement("img");
@@ -395,4 +346,20 @@ function generateSun() {
   divContainer.appendChild(anchor);
 
   return divContainer;
+}
+
+async function buttonOnClickToServer(planetName) {
+  const response = await fetch(serverUrl + "/" + planetName, {
+    method: "GET",
+    headers: {
+      "Content-Type": "text/plain",
+    },
+    body: null,
+  });
+  if (response.ok) {
+    console.log("The client request to the server was successful.");
+  } else {
+    console.log("The client request to the server was unsuccessful.");
+    console.log(response.status + " | " + response.statusText);
+  }
 }

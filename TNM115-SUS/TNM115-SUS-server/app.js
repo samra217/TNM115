@@ -80,7 +80,7 @@ function routingScore(res, jsonString) {
       result: susScore,
     };
     const jsonResultString = JSON.stringify(jsonResult);
-    sendResponse(res, 200, "applicatin/json", jsonResultString);
+    sendResponse(res, 200, "application/json", jsonResultString);
   }
 }
 
