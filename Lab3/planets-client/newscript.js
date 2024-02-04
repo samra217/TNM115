@@ -165,18 +165,18 @@ async function buttonOnClickToServer(ID) {
 
 async function generatePlanetText(planet) {
   const divContainer = document.createElement("div");
-  const h1 = createContentElement("h1",planet.name);
+  const h1 = createContentElement("h1", planet.name);
   if (planet.name !== "sun") {
     const pDesc = createContentElement("p", planet.description);
-    
+
     const pTimeDay = createContentElement(
       "p",
       "Time Day: " +
         (planet.time_day < 1
           ? getTimeInHours(planet.time_day) + " hours"
           : planet.time_day + " days")
-    ); 
-    
+    );
+
     //gives time in hours if time is less than 1 day
     const pTimeYear = createContentElement(
       "p",
