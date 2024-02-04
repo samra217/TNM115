@@ -15,21 +15,6 @@
 
 const serverUrl = "http://127.0.0.1:3001";
 
-// == Documentation for individual star/planet JSON objects ==
-// id           -> unique identifier for a JSON object across the dataset
-// name         -> textual name
-// description  -> textual description
-// time_day     -> length of 1 day on the respective planet, measured in (unit) earth days (1 complete self-rotation with respect to the sun)
-// time_year    -> length of 1 year, measured in (unit) earth days (1 complete orbit around the sun)
-// moons        -> moons of the respective planet; observe: value type varies!
-// neighbors    -> array containing the ids of its neighbors
-// image_src    -> filepath to image
-// online_ref   -> link (url) for further reading
-
-// =============================
-
-// manually added listener for the "DOMContentLoaded" event, which is automatically invoked
-// once the initial loading of the web page has been completed (.html file is completely parsed)
 document.addEventListener("DOMContentLoaded", function () {
   console.log("HTML DOM tree loaded, and ready for manipulation.");
   // === YOUR FUNCTION CALL TO INITIATE THE GENERATION OF YOUR WEB PAGE SHOULD GO HERE ===
@@ -39,104 +24,7 @@ document.addEventListener("DOMContentLoaded", function () {
   generateAllFromServer();
 });
 
-// ===== PROVIDED JS SOURCE CODE    -- ABOVE   =====
-// ===== JS LAB 2 IMPLEMENTATION -- BENEATH =====
-
-/*async function getPlanetDataFromServer() {
-  //client sends message to server
-  const response = await fetch(serverUrl + "/data", {
-    method: "GET",
-    headers: {
-      "Content-Type": "apllication/json",
-    },
-    body: null,
-  });
-  //client recieves servers response
-  if (response.ok) {
-    response.json().then((jsonBody) => {
-      JSON.parse(jsonBody);
-    });
-  } else {
-    console.log("Client request to server was unsuccesul");
-    console.log(response.status + " | " + response.statusText);
-  }
-}*/
-async function generateAllFromServer() {
-  //client sends message to server
-  const response = await fetch(serverUrl + "/data", {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  //client recieves servers response
-  if (response.ok) {
-    response.json().then((jsonBody) => {
-      console.log(jsonBody);
-      const container = document.createElement("div");
-
-      // Append new content to the container
-      container.appendChild(generateButton("Home"));
-      const gridContainer = document.createElement("article");
-      gridContainer.className = "button-grid-container";
-      gridContainer.style.display = "grid";
-      gridContainer.style.gridTemplateColumns = "1fr 1fr 1fr";
-      gridContainer.style.gap = "100px";
-      gridContainer.style.width = "100%";
-      gridContainer.appendChild(generateSun(jsonBody));
-      for (let i = 0; i < jsonBody.planets.length; i++) {
-        gridContainer.appendChild(generatePlanetText(jsonBody.planets[i]));
-      }
-      container.appendChild(gridContainer);
-
-      // Clear the body and append the container
-      document.body.innerHTML = "";
-      document.body.appendChild(container);
-    });
-  } else {
-    console.log("Client request to server was unsuccesul");
-    console.log(response.status + " | " + response.statusText);
-  }
-}
-
-async function generatePlanetFromServer(entityName) {
-  const response = await fetch(serverUrl + "/data" + "/" + entityName, {
-    method: "GET",
-    headers: {
-      "Content-Type": "apllication/json",
-    },
-    body: null,
-  });
-  //client recieves servers response
-  if (response.ok) {
-    return response.json();
-  } else {
-    console.log("Client request to server was unsuccesul");
-    console.log(response.status + " | " + response.statusText);
-  }
-}
-
-async function getSpecificPlanetImage(entityName) {
-  const response = await fetch(serverUrl + "/image" + "/" + entityName, {
-    method: "GET",
-    headers: {
-      "Content-Type": "image/png",
-    },
-    body: null,
-  });
-  //client recieves servers response
-  if (response.ok) {
-    response.blob().then((blobBody) => {
-      const filePath = URL.createObjectURL(blobBody);
-    });
-  } else {
-    console.log("Client request to server was unsuccesul");
-    console.log(response.status + " | " + response.statusText);
-  }
-}
-
-function home() {
-  //const solarSystemData = getPlanetDataFromServer();
+function home(jsonBody) {
   const gridContainer = document.createElement("article");
   gridContainer.className = "button-grid-container";
   gridContainer.style.display = "grid";
@@ -145,24 +33,31 @@ function home() {
   gridContainer.style.gap = "100px";
 
   const allButton = generateButton("All");
-  const sunButton = generateButton(solarSystemData.star.name);
+  allButton.id = 0;
+  const sunButton = generateButton(jsonBody.star.name);
+  sunButton.id = 1;
 
   gridContainer.appendChild(allButton);
   gridContainer.appendChild(sunButton);
-  for (let i = 0; i < solarSystemData.planets.length; i++) {
-    gridContainer.appendChild(generateButton(solarSystemData.planets[i].name));
+  iteratorID = 2;
+  for (let i = 0; i < jsonBody.planets.length; i++) {
+    const iteratorButton = generateButton(jsonBody.planets[i].name);
+    iteratorButton.id = iteratorID;
+    ++iteratorID;
+    gridContainer.appendChild(iteratorButton);
   }
   return gridContainer;
 }
 
-function generateButton(planetName) {
+function generateButton(planetName, ID) {
   const buttonDiv = document.createElement("div");
   buttonDiv.className = "button-grid-item";
 
   const button = document.createElement("button");
+  button.id = ID;
 
   button.onclick = function (planetName) {
-    buttonOnClickToServer(planetName);
+    buttonOnClickToServer(ID);
   };
 
   const buttonText = document.createTextNode(planetName);
@@ -179,36 +74,6 @@ function generateButton(planetName) {
   return buttonDiv;
 }
 
-function getPlanetIDbyName(planetName, solarSystemData) {
-  if (planetName.toLowerCase() === "sun") {
-    return "s1"; //id for sun
-  } else if (planetName.toLowerCase() === "all") {
-    return "all";
-  }
-  for (i = 0; i < solarSystemData.planets.length; i++) {
-    if (
-      solarSystemData.planets[i].name.toLowerCase() === planetName.toLowerCase()
-    ) {
-      return solarSystemData.planets[i].id;
-    }
-  }
-  return "0"; //ID for homebutton
-}
-
-function getPlanetNamebyID(planetID, solarSystemData) {
-  if (planetID.toLowerCase() === "s1") {
-    return "Sun";
-  }
-
-  for (i = 0; i < solarSystemData.planets.length; i++) {
-    if (
-      solarSystemData.planets[i].id.toLowerCase() === planetID.toLowerCase()
-    ) {
-      return solarSystemData.planets[i].name;
-    }
-  }
-}
-
 function getNeighbors(planet, solarSystemData) {
   returnString = "";
   for (let i = 0; i < planet.neighbors.length; i++) {
@@ -218,38 +83,35 @@ function getNeighbors(planet, solarSystemData) {
   return returnString;
 }
 
-/*function buttonOnClickToServer(planetName) {
+function buttonOnClickToServer(ID) {
   document.body.innerHTML = "";
 
   const planetID = getPlanetIDbyName(planetName);
 
-  if (planetID === "0") {
-    document.body.appendChild(home());
+  if (ID === -1) {
+    home();
     return;
   }
 
-  document.body.appendChild(generateButton("Home"));
-  if (planetName.toLowerCase() === "all") {
-    document.body.appendChild(generateAll());
+  document.body.appendChild(generateButton("Home", -1));
+  if (ID === 0) {
+    generateAllFromServer();
   } else if (planetID.startsWith("p")) {
-    for (let i = 0; i < solarSystemData.planets.length; i++) {
+    for (let i = 0; i < jsonBody.planets.length; i++) {
       if (planetID.endsWith(i + 1)) {
-        document.body.appendChild(
-          generatePlanetText(solarSystemData.planets[i])
-        );
+        document.body.appendChild(generatePlanetText(jsonBody.planets[i]));
       }
     }
   } else {
     document.body.appendChild(generateSun()); //function call for the sun
   }
-}*/
+}
 
 function getTimeInHours(days) {
   return days * 24;
 }
 
-async function generateAll() {
-  solarSystemData = await getAllPlanetData();
+function generateAll() {
   console.log(solarSystemData);
   document.body.innerHTML = "";
   document.body.appendChild(generateButton("Home"));
@@ -306,9 +168,7 @@ function generatePlanetText(planet) {
     "Neighbors: " + getNeighbors(planet)
   );
 
-  const img = document.createElement("img");
-  img.src = planet.image_src;
-  img.style.width = "40%";
+  const img = getSpecificPlanetImage(planet.name);
   anchor.appendChild(img);
 
   divContainer.appendChild(h1);
