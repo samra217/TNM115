@@ -231,15 +231,16 @@ async function generateHomePage() {
 
     gridContainer.appendChild(allButton);
     gridContainer.appendChild(sunButton);
+
     iteratorID = 1;
     for (let i = 0; i < solarSystemData.planets.length; i++) {
       const iteratorButton = generateButton(
         solarSystemData.planets[i].name,
-        iteratorID.toString()
-      );
+        iteratorID.toString());
       ++iteratorID;
       gridContainer.appendChild(iteratorButton);
     }
+
     document.body.appendChild(gridContainer);
   } catch (error) {
     console.error("Error fetching json: " + error.message);
@@ -281,7 +282,7 @@ function buttonOnClick(buttonID) {
     const buttonElement = document.getElementById(buttonID.toString());
     if (buttonElement) {
       entityName = buttonElement.textContent;
-      generatePlanetPage(entityName);
+      entityName === "sun" ? generateSun() : generatePlanetPage(entityName);
     } else {
       console.error("Button element not found for ID: " + buttonID);
     }
