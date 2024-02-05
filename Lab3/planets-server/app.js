@@ -7,25 +7,34 @@ const serverUrl = "http://" + hostname + ":" + port;
 
 const server = http.createServer((req, res) => {
   const requestUrl = new URL(serverUrl + req.url);
+
   const pathComponents = requestUrl.pathname.split("/");
   if (req.method == "OPTIONS") {
     sendResponse(res, 204, null, null);
   }
+
+
   if (req.method == "GET") {
     if (requestUrl.pathname == "/data") {
       const jsonData = require("./solar-system-data.json");
       sendResponse(res, 200, "application/json", JSON.stringify(jsonData));
+
+
     } else if (requestUrl.pathname.startsWith("/data/")) {
       const jsonData = require("./solar-system-data.json");
-      const entityName = pathComponents[2];
+      const entityName = pathComponents[2]; //the name of the planet we're looking for
+
+
       let entity;
       if (entityName.toLowerCase() === "sun") {
         //EDGE CASE (SUN IS NOT IN jsonData.planets)
-        entity = "sun";
+        entity = jsonData.star;
       } else {
+
         entity = jsonData.planets.find((planet) => {
           planet.name.toLowerCase() === entityName.toLowerCase();
         });
+
       }
 
       if (entity) {
@@ -35,14 +44,16 @@ const server = http.createServer((req, res) => {
           res,
           404,
           "application/json",
-          JSON.stringify({ error: "enttiy not found" })
+          JSON.stringify({ error: "entity not found" })
         );
       }
-    } else if (requestUrl.pathname.startsWith("/image/")) {
+    } 
+    else if (requestUrl.pathname.startsWith("/image/")) {
       const entityName = pathComponents[2];
       console.log(entityName);
       const imagePath = "./media/" + entityName + ".png";
       console.log(imagePath);
+      
       if (fs.existsSync(imagePath)) {
         fs.readFile(imagePath, (err, data) => {
           if (err) {

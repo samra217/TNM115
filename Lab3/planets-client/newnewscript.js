@@ -56,7 +56,7 @@ async function reqSpecificData(entityName) {
 }
 
 async function createImgElement(entityName) {
-  const response = await fetch(serverUrl + "/image" + entityName, {
+  const response = await fetch(serverUrl + "/image/" + entityName, {
     method: "GET",
     headers: {
       "Content-Type": "image/png",
@@ -86,9 +86,9 @@ async function generateAllSolarSystemData() {
     gridContainer.style.gap = "100px";
     gridContainer.style.width = "100%";
 
-    gridContainer.appendChild(generatePlanetText(jsonData.star.name));
+    gridContainer.appendChild(generateSun());
     for (let i = 0; i < jsonData.planets.length; i++) {
-      gridContainer.appendChild(generatePlanetText(jsonData.planets[i].name));
+      gridContainer.appendChild(generatePlanetText(jsonData.planets[i].name.toLowerCase()));
     }
     document.body.innerHTML = "";
 
@@ -105,10 +105,62 @@ async function generateAllSolarSystemData() {
 async function generatePlanetPage(entityName) {
   document.body.appendChild(generateButton("Home", "h"));
   try {
-    document.body.appendChild(await generatePlanetText(entityName));
+    if(entityName.toLowerCase() === "sun") {
+      document.body.appendChild(await generateSun());
+    }
+    else {
+      document.body.appendChild(await generatePlanetText(entityName));
+    }
+    
+  } catch (error) {
+  
+    console.error("Error fetching specific planet data: " + error.message);
+  }
+}
+
+
+async function generateSun() {
+  const divContainer = document.createElement("div");
+  const h1 = createContentElement("h1", "sun");
+
+  let sun;
+  try {
+    sun = reqSpecificData("sun");
   } catch (error) {
     console.error("Error fetching specific planet data: " + error.message);
   }
+
+
+  const pDesc = createContentElement("p", sun.description);
+
+
+  const pTimeDay = createContentElement(
+    "p",
+    "Time Day: " +
+      (sun.time_day < 1
+        ? getTimeInHours(sun.time_day) + " hours"
+        : sun.time_day + " days")
+  ); //gives time in hours if time is less than 1 day
+  const pTimeYear = createContentElement(
+    "p",
+    "Time year: " + sun.time_year
+  );
+  divContainer.appendChild(h1);
+  divContainer.appendChild(pDesc);
+  divContainer.appendChild(pTimeDay);
+  divContainer.appendChild(pTimeYear);
+
+  const anchor = document.createElement("a");
+  anchor.href = planet.online_ref;
+  try {
+    const img = await createImgElement(planet.name);
+    anchor.appendChild(img);
+  } catch (error) {
+    console.error("Error loading image:", error.message);
+  }
+  divContainer.appendChild(anchor);
+
+  return divContainer;
 }
 
 async function generatePlanetText(entityName) {
@@ -120,56 +172,36 @@ async function generatePlanetText(entityName) {
   } catch (error) {
     console.error("Error fetching specific planet data: " + error.message);
   }
+  const pDesc = createContentElement("p", planet.description);
+  const pTimeDay = createContentElement(
+    "p",
+    "Time Day: " +
+      (planet.time_day < 1
+        ? getTimeInHours(planet.time_day) + " hours"
+        : planet.time_day + " days")
+  );
 
-  if (planet.name !== "sun") {
-    const pDesc = createContentElement("p", planet.description);
+  //gives time in hours if time is less than 1 day
+  const pTimeYear = createContentElement(
+    "p",
+    "Time year: " + planet.time_year
+  );
+  const pMoons = createContentElement(
+    "p",
+    "Moons: " + (planet.moons != null ? planet.moons : "0")
+  );
+  const pNeighbors = createContentElement(
+    "p",
+    "Neighbors: " + getNeighbors(planet)
+  );
 
-    const pTimeDay = createContentElement(
-      "p",
-      "Time Day: " +
-        (planet.time_day < 1
-          ? getTimeInHours(planet.time_day) + " hours"
-          : planet.time_day + " days")
-    );
+  divContainer.appendChild(h1);
+  divContainer.appendChild(pDesc);
+  divContainer.appendChild(pTimeDay);
+  divContainer.appendChild(pTimeYear);
+  divContainer.appendChild(pMoons);
+  divContainer.appendChild(pNeighbors);
 
-    //gives time in hours if time is less than 1 day
-    const pTimeYear = createContentElement(
-      "p",
-      "Time year: " + planet.time_year
-    );
-    const pMoons = createContentElement(
-      "p",
-      "Moons: " + (planet.moons != null ? planet.moons : "0")
-    );
-    const pNeighbors = createContentElement(
-      "p",
-      "Neighbors: " + getNeighbors(planet)
-    );
-
-    divContainer.appendChild(h1);
-    divContainer.appendChild(pDesc);
-    divContainer.appendChild(pTimeDay);
-    divContainer.appendChild(pTimeYear);
-    divContainer.appendChild(pMoons);
-    divContainer.appendChild(pNeighbors);
-  } else {
-    const pDesc = createContentElement("p", planet.description);
-    const pTimeDay = createContentElement(
-      "p",
-      "Time Day: " +
-        (planet.time_day < 1
-          ? getTimeInHours(planet.time_day) + " hours"
-          : planet.time_day + " days")
-    ); //gives time in hours if time is less than 1 day
-    const pTimeYear = createContentElement(
-      "p",
-      "Time year: " + planet.time_year
-    );
-    divContainer.appendChild(h1);
-    divContainer.appendChild(pDesc);
-    divContainer.appendChild(pTimeDay);
-    divContainer.appendChild(pTimeYear);
-  }
   const anchor = document.createElement("a");
   anchor.href = planet.online_ref;
   try {
