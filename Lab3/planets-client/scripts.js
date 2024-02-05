@@ -81,8 +81,6 @@ async function generateAllSolarSystemData() {
   try {
     const jsonData = await reqAllData();
 
-   
-
     const gridContainer = document.createElement("article");
     gridContainer.className = "button-grid-container";
     gridContainer.style.display = "grid";
@@ -93,9 +91,10 @@ async function generateAllSolarSystemData() {
 
     gridContainer.appendChild(await generateSun());
     for (let i = 0; i < jsonData.planets.length; i++) {
-      gridContainer.appendChild(await generatePlanetText(jsonData.planets[i].name.toLowerCase()));
+      gridContainer.appendChild(
+        await generatePlanetText(jsonData.planets[i].name)
+      );
     }
-
 
     document.body.appendChild(gridContainer);
   } catch (error) {
@@ -106,23 +105,19 @@ async function generateAllSolarSystemData() {
 async function generatePlanetPage(entityName) {
   document.body.appendChild(generateButton("Home", "h"));
   try {
-    if(entityName.toLowerCase() === "sun") {
+    if (entityName.toLowerCase() === "sun") {
       document.body.appendChild(await generateSun());
-    }
-    else {
+    } else {
       document.body.appendChild(await generatePlanetText(entityName));
     }
-    
   } catch (error) {
-  
     console.error("Error fetching specific planet data: " + error.message);
   }
 }
 
-
 async function generateSun() {
   const divContainer = document.createElement("div");
-  const h1 = createContentElement("h1", "sun");
+  const h1 = createContentElement("h1", "Sun");
 
   let sun;
   try {
@@ -130,7 +125,6 @@ async function generateSun() {
   } catch (error) {
     console.error("Error fetching specific planet data: " + error.message);
   }
-
 
   const pDesc = createContentElement("p", sun.description);
   const pNeighbors = createContentElement(
@@ -141,7 +135,6 @@ async function generateSun() {
   divContainer.appendChild(h1);
   divContainer.appendChild(pDesc);
   divContainer.appendChild(pNeighbors);
-
 
   const anchor = document.createElement("a");
   anchor.href = sun.online_ref;
@@ -175,10 +168,7 @@ async function generatePlanetText(entityName) {
   );
 
   //gives time in hours if time is less than 1 day
-  const pTimeYear = createContentElement(
-    "p",
-    "Time year: " + planet.time_year
-  );
+  const pTimeYear = createContentElement("p", "Time year: " + planet.time_year);
   const pMoons = createContentElement(
     "p",
     "Moons: " + (planet.moons != null ? planet.moons : "0")
@@ -229,7 +219,8 @@ async function generateHomePage() {
     for (let i = 0; i < solarSystemData.planets.length; i++) {
       const iteratorButton = generateButton(
         solarSystemData.planets[i].name,
-        iteratorID.toString());
+        iteratorID.toString()
+      );
       ++iteratorID;
       gridContainer.appendChild(iteratorButton);
     }
@@ -266,7 +257,6 @@ function generateButton(planetName, buttonID) {
 }
 
 function buttonOnClick(buttonID) {
-  
   if (buttonID === "h") {
     document.body.innerHTML = "";
     generateHomePage();
@@ -278,9 +268,8 @@ function buttonOnClick(buttonID) {
     if (buttonElement) {
       entityName = buttonElement.textContent;
       //entityName === "sun" ? generateSun() : generatePlanetPage(entityName);
-      console.log(entityName);
+
       generatePlanetPage(entityName);
-      
     } else {
       console.error("Button element not found for ID: " + buttonID);
     }
