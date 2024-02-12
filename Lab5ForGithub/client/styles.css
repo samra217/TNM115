@@ -1,0 +1,44 @@
+
+body {
+    background-color: chocolate;
+}
+
+
+.artist-grid-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+
+
+h1 {
+    text-align: center;
+}
+
+
+button  {
+    width: 80%;
+    height: 100px;
+    font-size: xx-large;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    border-style: inset;
+    border-width: 1px;
+
+    opacity: 50%;
+    background-color: rgb(245, 154, 90);
+
+   
+}
+
+button:hover {
+    border-style: outset;
+
+    opacity: 80%;
+    background-color: rgb(250, 202, 157);
+    transition: border,opacity,background-color 0.2s ease;
+    cursor: pointer;
+}
+
+img {
+    float: right;
+    width: 40%;
+}
