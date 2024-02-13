@@ -5,7 +5,7 @@ const { send } = require("node:process");
 const hostname = "127.0.0.1";
 const port = 3001;
 const serverUrl = "http://" + hostname + ":" + port;
-
+const hej = "Hej";
 const server = http.createServer((req, res) => {
   const requestUrl = new URL(serverUrl + req.url);
   
