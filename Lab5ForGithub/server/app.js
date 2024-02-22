@@ -23,6 +23,11 @@ const server = http.createServer((req, res) => {
   if (req.method === "OPTIONS") {
     sendResponse(res, 204, null, null);
   }
+  if (req.method == "POST") {
+    if (pathComponents[1] === "insertartist") {
+      readJsonFromClient(req, res);
+    }
+  }
 
   if (req.method === "GET") {
     if (requestUrl.pathname === "/artists") {
@@ -113,13 +118,53 @@ async function routingSearch(res, searchString) {
   const dbCollection = dbClient.db(dbName).collection(dbCollectionName); //Selects the database, and then select the collection (might have to change)
 
   const document = await dbCollection
-    .find(searchQuery)
+    .find({})
+    .filter(searchQuery)
     .project({ name: 1, _id: 1 })
     .toArray();
 
   const documentJson = { artistArr: document };
   console.log(documentJson);
+  console.log(document.length);
   sendResponse(res, 200, "application/json", JSON.stringify(documentJson));
+}
+
+function readJsonFromClient(req, res) {
+  const bodyChunks = [];
+
+  //handling error while reading
+  req.on("error", (err) => {
+    console.log(
+      "An error ocurred when reading the HTTP POST message body: " + err.message
+    );
+    sendResponse(res, 500, null, null);
+  });
+
+  //read a chunk of data
+  req.on("data", (chunk) => {
+    bodyChunks.push(chunk);
+  });
+
+  // When last chunk of data is read
+  req.on("end", () => {
+    const messageBody = Buffer.concat(bodyChunks).toString();
+    insertToDB(res, messageBody)
+      .catch(console.error)
+      .finally(() => {
+        closeDbConnection();
+      });
+  });
+}
+
+async function insertToDB(res, messageBody) {
+  try {
+    await dbClient.connect();
+    const dbCollection = dbClient.db(dbName).collection(dbCollectionName); //Selects the database, and then select the collection
+    await dbCollection.insertOne(JSON.parse(messageBody));
+    sendResponse(res, 200, null, null);
+  } catch (error) {
+    sendResponse(res, 500, "application/json", error.message);
+  }
 }
 
 function sendResponse(res, statusCode, contentType, data) {

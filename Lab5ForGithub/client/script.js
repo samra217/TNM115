@@ -193,15 +193,16 @@ function getSearchBarInput() {
 
 function generateSearchPage(json) {
   const articleDiv = document.querySelector(".artist-grid-container");
+  articleDiv.innerHTML = "";
 
-  if (json.artistsArr.length === 1) {
+  if (json.artistArr.length === 1) {
     console.log(json);
     generateArtistPage(json.artistArr[0]._id);
     return;
   }
 
-  for (let i = 0; i < json.artistsArr.length; i++) {
-    const artistElement = createArtistGridItem(artistsJson.artistsArr[i]);
+  for (let i = 0; i < json.artistArr.length; i++) {
+    const artistElement = createArtistGridItem(json.artistArr[i]);
     articleDiv.appendChild(artistElement);
   }
 }

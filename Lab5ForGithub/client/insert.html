@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script src="insert.js"></script>
+    <link rel="stylesheet" href="styles.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <a href="index.html">
+      <button>home page</button>
+    </a>
+    <article>
+      <h1>Insert artist</h1>
+      <div>
+        <input type="text" placeholder="name" id="insert-name" />
+        <input type="text" placeholder="description" id="insert-desc" />
+        <input type="text" placeholder="_id" id="insert-id" />
+        <input type="text" placeholder="discogsUrl" id="insert-disc" />
+        <input type="text" placeholder="reference Urls" id="insert-ref" />
+      </div>
+      <p id="error"></p>
+      <button onclick="saveInputs()">Insert</button>
+    </article>
+  </body>
+</html>
